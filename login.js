@@ -22,6 +22,8 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
+// TODO Need to make a basic page where you can choose to make account or login
+
 // Login page
 app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname + '/login.html'));
@@ -32,11 +34,16 @@ app.get('/createAccount', function (req, res) {
     res.sendFile(path.join(__dirname + '/create_user.html'))
 })
 
-// Post request to database about the username and password to login
+// Static files that I need to for some functionality in css and js
+app.use('/static', express.static('./static'))
+
+// Post request access user info from database. the username and password to login
 app.post('/auth', function (req, res) {
 
     var username = req.body.username
     var password = req.body.password
+
+    // TODO Need to hash the plain password before it goes to db
 
     if(username && password){
 
@@ -63,27 +70,27 @@ app.post('/create', function (req, res) {
     var username = req.body.username
     var password = req.body.password
 
-    if(username && password){
-        connection.query('INSERT INTO accounts (username, password) VALUES (?, ?)',
-            [username, password], function (error, result, fields) {
-                console.log(result)
-                console.log(error)
-                setTimeout(function () {
+    // TODO Need to hash the password before it goes into db
 
-                }, 10000)
-                res.redirect('/')
-                res.end()
-
-            })
-    }else {
-        res.send('Creating account failed!')
-        res.end()
-    }
+        // Checking if there is text in fields
+        if(username && password){
+            // Sending the data to database
+            connection.query('INSERT INTO accounts (username, password) VALUES (?, ?)',
+                [username, password], function (error, result, fields) {
+                    res.redirect('/')
+                    res.end()
+                })
+        }else {
+            res.send('Creating account failed!')
+            res.end()
+        }
 
 })
 
+
 app.get('/home', function(request, response) {
     if (request.session.loggedin) {
+        // TODO Need to make a personal login page that displays some personal info
         response.send('Welcome back, ' + request.session.username + '!');
     } else {
         response.send('Please login to view this page!');

@@ -3,42 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create account</title>
-    <style>
-
-        .user-form {
-            width: 300px;
-            margin: 0 auto;
-            font-family: Tahoma, Geneva, sans-serif;
-        }
-        .user-form h1 {
-            text-align: center;
-            color: #4d4d4d;
-            font-size: 24px;
-            padding: 20px 0 20px 0;
-        }
-        .user-form input[type="password"],
-        .user-form input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #dddddd;
-            margin-bottom: 15px;
-            box-sizing:border-box;
-        }
-        .user-form input[type="submit"] {
-            width: 100%;
-            padding: 15px;
-            background-color: #000000;
-            border: 0;
-            box-sizing: border-box;
-            cursor: pointer;
-            font-weight: bold;
-            color: #ffffff;
-        }
-        .user-form input[type="submit"]:hover {
-            color: #f82400;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="static/create_user_style.css">
 </head>
 <body>
 
@@ -48,12 +13,18 @@
 
     <form action="create" METHOD="post">
         <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="password" required>
-        <input type="password" name="passwordAgain" placeholder="confirm password">
+        <input type="password" name="password" id="password" placeholder="password" required>
         <input type="submit">
     </form>
 
-</div>
 
+
+</div>
+<div class="info">
+    <p><i>*Password must contain <b id="upper" class="invalid">uppercase</b> & <b id="lower" class="invalid">lowercase</b>
+        letters and </br> <b id="number" class="invalid">numbers</b> or <b id="special" class="invalid">special characters</b>
+        and be <b id="length" class="invalid">7 - 20 characters long</b></i></p>
+</div>
+<script src="static/password_validation.js"></script>
 </body>
 </html>
