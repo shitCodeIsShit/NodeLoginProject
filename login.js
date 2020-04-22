@@ -4,6 +4,14 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
 
+// Imports for crypting passwords
+var bcrypt = require('bcrypt');
+var saltRounds = 10;
+
+// All created users are set to some privilege level
+var privilege = 'user'
+
+// MAIN
 var app = express()
 
 var connection = mysql.createConnection({
@@ -40,23 +48,36 @@ app.use('/static', express.static('./static'))
 // Post request access user info from database. the username and password to login
 app.post('/auth', function (req, res) {
 
+    // Taking the username and password from user
     var username = req.body.username
-    var password = req.body.password
 
-    // TODO Need to hash the plain password before it goes to db
+    if(username){
 
-    if(username && password){
-
-        connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?',
-            [username, password], function (error, results, fields) {
+        // Querying database for the some username if found check if the passwords match
+        connection.query('SELECT * FROM accounts WHERE username = ?',
+            [username], function (error, results, fields) {
                 if (results.length > 0){
-                    req.session.loggedin = true;
-                    req.session.username = username;
-                    res.redirect('/home');
+
+                    var password = req.body.password
+
+                    // Checking if the passwords match the hashed one from db
+                    bcrypt.compare(password, results[0].password, function (err, result) {
+
+                        // If they are some do some stuff
+                        if(result){
+                            console.log('Passwords match! Continuing...')
+                            req.session.loggedin = true;
+                            req.session.username = username;
+                            res.redirect('/home');
+                            res.end()
+                        }else {
+                            console.log('The password given is not the some as the hash')
+                            console.log(err)
+                        }
+                    })
                 } else {
-                    res.send('Incorrect username and/or password!')
+                    res.send('No account with this name!')
                 }
-                res.end()
             })
     }else {
         res.send('Please enter Username and Password')
@@ -68,22 +89,40 @@ app.post('/auth', function (req, res) {
 app.post('/create', function (req, res) {
 
     var username = req.body.username
-    var password = req.body.password
+    var password = req.body.password.toString()
 
-    // TODO Need to hash the password before it goes into db
+    //hashing the password before it goes into db
+    bcrypt.genSalt(saltRounds, function (err, salt) {
+        bcrypt.hash(password, salt, function (err, hash) {
+            if(err){
+                console.log(err)
+            }
 
-        // Checking if there is text in fields
-        if(username && password){
-            // Sending the data to database
-            connection.query('INSERT INTO accounts (username, password) VALUES (?, ?)',
-                [username, password], function (error, result, fields) {
-                    res.redirect('/')
-                    res.end()
-                })
-        }else {
-            res.send('Creating account failed!')
-            res.end()
-        }
+            // Password is now HASHED (60bit)
+            password = hash;
+
+            // Checking if there is text in fields
+            if(username && password){
+                // Sending the data to database
+                connection.query('INSERT INTO accounts (username, password, access_level) VALUES (?, ?, ?)',
+                    [username, password, privilege], function (error, result, fields) {
+                        res.redirect('/')
+                        res.end()
+                    })
+            }else {
+                res.send('Creating account failed! Redirecting back')
+
+                // Waiting couple seconds so the user get to read the text
+                setTimeout(function () {
+                    console.log('Waiting 3 secs...')
+                }, 3000)
+
+                res.redirect('/createAccount')
+                res.end()
+            }
+
+        })
+    })
 
 })
 
