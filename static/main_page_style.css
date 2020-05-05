@@ -1,0 +1,17 @@
+button {
+    margin-top: 4em;
+}
+
+#luo {
+    float: left;
+    margin-left: 4em;
+}
+
+#kirjaudu {
+    float: right;
+    margin-right: 4em;
+}
+
+footer {
+    text-align: center;
+}

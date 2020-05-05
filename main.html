@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="static/main_page_style.css">
+</head>
+<body>
+
+<div class="jumbotron text-center ">
+    <div>
+        <h1 class="display-1">Positiivisuus indeksi</h1>
+    </div>
+</div>
+
+<div class="container">
+    <p class="lead">Sanoilla joita käytämme on vaikutusta meihin. Sivun tarkoituksena on kerätä dataa yksittäisen sanan
+    positiivisuudesta tai sen negatiivisuudesta. Toimi näin: 1. luot käyttäjän ja kirjaudut sisään. 2. Sinulta kysytään
+    x määrä sanoja. Tarkoituksena on vastata ensimmäisen reaktiosi perusteella tuntuuko sana positiiviselta vai
+    negatiiviselta.</p>
+</div>
+
+<div class="cotainer-fluid">
+    <form action="/createAccount">
+        <button type="submit" id="luo" class="btn btn-primary btn-lg">Luo käyttäjä</button>
+    </form>
+
+    <form action="/login">
+        <button type="submit" id="kirjaudu" class="btn btn-secondary btn-lg">Kirjaudu sisään</button>
+    </form>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+#logoutButton {
+    float: right;
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
+#progressBar {
+    margin-top: 1em;
+}
+
+.progress-bar {
+    width: 70%;
+}
+
+#bigButton {
+    margin-top: 4em;
+    background-color: #fa9900;
+    border-color: #fa9900;
+    color: black;
+}
+
+#bigButton:hover {
+    border-color: blue;
+}
+
+#deleteButton {
+    margin-top: 4em;
+    margin-right: 1em;
+    float: right;
+}

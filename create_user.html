@@ -9,21 +9,20 @@
 
 <div class="user-form">
 
-    <h1>Create account</h1>
+    <h1>Luo käyttäjä</h1>
 
     <form action="create" METHOD="post">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" id="password" placeholder="password" required>
-        <input type="submit">
+        <input type="text" name="username" placeholder="Käyttäjänimi" required>
+        <input type="password" name="password" id="password" placeholder="salasana" required>
+        <button type="submit">Luo käyttyäjä</button>
     </form>
 
 
 
 </div>
 <div class="info">
-    <p><i>*Password must contain <b id="upper" class="invalid">uppercase</b> & <b id="lower" class="invalid">lowercase</b>
-        letters and </br> <b id="number" class="invalid">numbers</b> or <b id="special" class="invalid">special characters</b>
-        and be <b id="length" class="invalid">7 - 20 characters long</b></i></p>
+    <p><i>*Keksivain jokin pitkäsana joka on <b>helppo muistaa</b>.</br>
+        kirjoitat yhteen esim. PomppivanPoninMajatalos</i></p>
 </div>
 <script src="static/password_validation.js"></script>
 </body>

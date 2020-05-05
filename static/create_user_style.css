@@ -17,7 +17,7 @@
     margin-bottom: 15px;
     box-sizing:border-box;
 }
-.user-form input[type="submit"] {
+button {
     width: 100%;
     padding: 15px;
     background-color: #000000;

@@ -4,6 +4,9 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
 
+// Usefull parameter
+var time = new Date();
+
 // Imports for crypting passwords
 var bcrypt = require('bcrypt');
 var saltRounds = 10;
@@ -33,13 +36,31 @@ app.use(bodyParser.json());
 // TODO Need to make a basic page where you can choose to make account or login
 
 // Login page
-app.get('/', function(request, response) {
+app.get('/login', function(request, response) {
     response.sendFile(path.join(__dirname + '/login.html'));
+});
+
+// Main page
+app.get('/', function(request, response) {
+    response.sendFile(path.join(__dirname + '/main.html'));
 });
 
 // Create account page
 app.get('/createAccount', function (req, res) {
     res.sendFile(path.join(__dirname + '/create_user.html'))
+})
+
+app.get('/deleteSuccess', function (req, res) {
+    res.sendFile(path.join(__dirname + 'account_delete_success.html'))
+})
+
+// Create users home page
+app.get('/home:username', function (req, res) {
+    if(req.session.loggedin){
+        res.sendFile(path.join(__dirname + '/user_main_page.html'))
+    }else {
+        res.send('Please login to access this page')
+    }
 })
 
 // Static files that I need to for some functionality in css and js
@@ -65,10 +86,13 @@ app.post('/auth', function (req, res) {
 
                         // If they are some do some stuff
                         if(result){
-                            console.log('Passwords match! Continuing...')
+                            console.log('Passwords match!')
+                            console.log('User _' + req.body.username + '_ login time_ ' + time.getTime())
                             req.session.loggedin = true;
                             req.session.username = username;
-                            res.redirect('/home');
+                            console.log("Directing " + username + " to a home page")
+                            res.redirect('/home' + username);
+
                             res.end()
                         }else {
                             console.log('The password given is not the some as the hash')
@@ -89,11 +113,11 @@ app.post('/auth', function (req, res) {
 app.post('/create', function (req, res) {
 
     var username = req.body.username
-    var password = req.body.password.toString()
+    // Made one change here!
 
     //hashing the password before it goes into db
     bcrypt.genSalt(saltRounds, function (err, salt) {
-        bcrypt.hash(password, salt, function (err, hash) {
+        bcrypt.hash(req.body.password.toString(), salt, function (err, hash) {
             if(err){
                 console.log(err)
             }
@@ -106,12 +130,10 @@ app.post('/create', function (req, res) {
                 // Sending the data to database
                 connection.query('INSERT INTO accounts (username, password, access_level) VALUES (?, ?, ?)',
                     [username, password, privilege], function (error, result, fields) {
-                        res.redirect('/')
+                        res.redirect('/login')
                         res.end()
                     })
             }else {
-                res.send('Creating account failed! Redirecting back')
-
                 // Waiting couple seconds so the user get to read the text
                 setTimeout(function () {
                     console.log('Waiting 3 secs...')
@@ -126,15 +148,35 @@ app.post('/create', function (req, res) {
 
 })
 
+// Deletes the users account that is loggedin
+app.post('/deleteAccount', function (req, res) {
+    connection.query('DELETE FROM accounts WHERE username=?', [req.body.username], function (error, result, fields) {
+        console.log(req.body.username + '_ account successfully deleted')
+        res.redirect('/deleteSuccess')
+    })
+})
 
-app.get('/home', function(request, response) {
-    if (request.session.loggedin) {
-        // TODO Need to make a personal login page that displays some personal info
-        response.send('Welcome back, ' + request.session.username + '!');
+// Sending users name for the client so it can be used in website
+app.get('/username', function(req, res) {
+    if (req.session.loggedin) {
+        res.send(req.session.username);
     } else {
-        response.send('Please login to view this page!');
+        res.send('Please login to view this page!');
     }
-    response.end();
+    res.end();
 });
+
+// switching to main page after successful delete
+app.get('/backToMain', function (req, res) {
+    res.redirect('/main.html')
+})
+
+// Logout with the user you loged in
+app.get('/logout', function (req, res) {
+    console.log('User _' + req.session.username + '_ logout time_ ' + time.getTime())
+    req.session.loggedin = false;
+    res.send({redirect: '/'})
+    res.end()
+})
 
 app.listen(3000);
