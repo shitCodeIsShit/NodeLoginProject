@@ -30,10 +30,11 @@ app.use(session({
     saveUninitialized: true
 }))
 
+// This middleware is so that I get req in a easy to read and modify format.
+// Everything is in req.body.somethingINeed
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-// TODO Need to make a basic page where you can choose to make account or login
 
 // Login page
 app.get('/login', function(request, response) {
@@ -51,7 +52,7 @@ app.get('/createAccount', function (req, res) {
 })
 
 app.get('/deleteSuccess', function (req, res) {
-    res.sendFile(path.join(__dirname + 'account_delete_success.html'))
+    res.sendFile(path.join(__dirname + '/account_delete_success.html'))
 })
 
 // Create users home page
@@ -90,7 +91,8 @@ app.post('/auth', function (req, res) {
                             console.log('User _' + req.body.username + '_ login time_ ' + time.getTime())
                             req.session.loggedin = true;
                             req.session.username = username;
-                            console.log("Directing " + username + " to a home page")
+                            console.log("Directing _" + username + "_ to a home page")
+                            console.log()
                             res.redirect('/home' + username);
 
                             res.end()
@@ -100,6 +102,7 @@ app.post('/auth', function (req, res) {
                         }
                     })
                 } else {
+                    console.log('wrong password was given')
                     res.send('No account with this name!')
                 }
             })
@@ -130,6 +133,9 @@ app.post('/create', function (req, res) {
                 // Sending the data to database
                 connection.query('INSERT INTO accounts (username, password, access_level) VALUES (?, ?, ?)',
                     [username, password, privilege], function (error, result, fields) {
+                        console.log('We have a new user _' + username + '_ ')
+                        console.log('Creation time_ ' + time.getTime())
+                        console.log()
                         res.redirect('/login')
                         res.end()
                     })
@@ -152,6 +158,7 @@ app.post('/create', function (req, res) {
 app.post('/deleteAccount', function (req, res) {
     connection.query('DELETE FROM accounts WHERE username=?', [req.body.username], function (error, result, fields) {
         console.log(req.body.username + '_ account successfully deleted')
+        console.log()
         res.redirect('/deleteSuccess')
     })
 })
@@ -174,6 +181,7 @@ app.get('/backToMain', function (req, res) {
 // Logout with the user you loged in
 app.get('/logout', function (req, res) {
     console.log('User _' + req.session.username + '_ logout time_ ' + time.getTime())
+    console.log()
     req.session.loggedin = false;
     res.send({redirect: '/'})
     res.end()
